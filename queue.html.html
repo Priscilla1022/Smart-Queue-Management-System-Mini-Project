@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QueueLess - Smart Queue Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        header {
+            background: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px #00000010;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            color: #167d8d;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            margin-left: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #168b98;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #116b80, #20a6a2);
+            color: white;
+            padding: 65px 8%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #167d8d;
+            margin-bottom: 8px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px #0000000c;
+        }
+
+        .card h3 {
+            color: #167d8d;
+            margin-bottom: 12px;
+        }
+
+        .booking {
+            max-width: 550px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 3px 20px #00000010;
+        }
+
+        .booking h2 {
+            text-align: center;
+            color: #167d8d;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd5dd;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 7px;
+            background: #168b98;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #116b80;
+        }
+
+        .result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #e9f8f5;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result h3 {
+            color: #137d70;
+        }
+
+        .token {
+            font-size: 35px;
+            font-weight: bold;
+            color: #168b98;
+            margin: 12px;
+        }
+
+        /* LIVE TOKEN DISPLAY */
+
+        .live-section {
+            background: #101827;
+            color: white;
+            padding: 45px 5%;
+            margin-top: 50px;
+        }
+
+        .live-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .live-title h2 {
+            color: #35e0b1;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .live-title p {
+            color: #cbd5e1;
+        }
+
+        .live-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .department-card {
+            background: #1e293b;
+            padding: 25px 18px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .department-card h3 {
+            color: #35e0b1;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .token-box {
+            background: #263449;
+            padding: 18px 10px;
+            margin-bottom: 14px;
+            border-radius: 10px;
+        }
+
+        .token-box h4 {
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+        .live-token {
+            font-size: 38px;
+            font-weight: bold;
+            color: #35e0b1;
+        }
+
+        .waiting {
+            font-size: 38px;
+            font-weight: bold;
+            color: #facc15;
+        }
+
+        .call-btn {
+            background: #35e0b1;
+            color: #101827;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .call-btn:hover {
+            background: #20bd94;
+        }
+
+        .reset-btn {
+            background: #e76f6f;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .reset-btn:hover {
+            background: #cc5050;
+        }
+
+        .live-note {
+            text-align: center;
+            color: #cbd5e1;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        footer {
+            background: #173b4a;
+            color: white;
+            text-align: center;
+            padding: 22px;
+            margin-top: 50px;
+            line-height: 1.8;
+        }
+
+        @media(max-width: 900px) {
+            .live-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin: 0 6px;
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .container {
+                width: 92%;
+            }
+
+            .live-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="logo">QueueLess</div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#services">Departments</a>
+            <a href="#booking">Book Token</a>
+            <a href="#live-display">Live Tokens</a>
+        </nav>
+
+    </header>
+
+
+    <!-- HOME SECTION -->
+
+    <section class="hero" id="home">
+
+        <h1>Skip the Queue, Save Your Time!</h1>
+
+        <p>
+            Welcome to QueueLess – Smart Queue Management System.
+            Book your hospital token online and check your queue status
+            without waiting in long lines.
+        </p>
+
+    </section>
+
+
+    <!-- DEPARTMENTS -->
+
+    <div class="container" id="services">
+
+        <div class="section-title">
+            <h2>Our Departments</h2>
+            <p>Select your department and book your token.</p>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>General Medicine</h3>
+                <p>For general health consultations.</p>
+            </div>
+
+            <div class="card">
+                <h3>Dental</h3>
+                <p>For dental checkups and treatments.</p>
+            </div>
+
+            <div class="card">
+                <h3>Dermatology</h3>
+                <p>For skin and hair consultations.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOOKING SECTION -->
+
+    <section class="booking" id="booking">
+
+        <h2>Book Your Token</h2>
+
+        <form id="bookingForm">
+
+            <label for="name">Patient Name</label>
+
+            <input type="text" id="name"
+                   placeholder="Enter your name" required>
+
+            <label for="email">Email Address</label>
+
+            <input type="email" id="email"
+                   placeholder="Enter your email" required>
+
+            <label for="department">Select Department</label>
+
+            <select id="department" required>
+
+                <option value="">Choose Department</option>
+
+                <option value="General Medicine">
+                    General Medicine
+                </option>
+
+                <option value="Dental">
+                    Dental
+                </option>
+
+                <option value="Dermatology">
+                    Dermatology
+                </option>
+
+            </select>
+
+            <button type="submit">Book My Token</button>
+
+        </form>
+
+
+        <!-- BOOKING RESULT -->
+
+        <div class="result" id="result">
+
+            <h3>Token Booked Successfully!</h3>
+
+            <div class="token" id="tokenNumber"></div>
+
+            <p id="patientName"></p>
+
+            <p id="patientDepartment"></p>
+
+            <p id="queuePosition"></p>
+
+        </div>
+
+    </section>
+
+
+    <!-- LIVE TOKEN DISPLAY -->
+
+    <section class="live-section" id="live-display">
+
+        <div class="live-title">
+
+            <h2>QUEUELESS LIVE TOKEN DISPLAY</h2>
+
+            <p>Check the current hospital queue status.</p>
+
+        </div>
+
+
+        <div class="live-container">
+
+
+            <!-- GENERAL MEDICINE -->
+
+            <div class="department-card">
+
+                <h3>General Medicine</h3>
+
+                <div class="token-box">
+
+                    <h4>NOW SERVING</h4>
+
+                    <div class="live-token" id="generalCurrent">
+                        Not Started
+                    </div>
+
+                </div>
+
+                <div class="token-box">
+
+                    <h4>NEXT TOKEN</h4>
+
+                    <div class="live-token" id="generalNext">
+                        G001
+                    </div>
+
+                </div>
+
+                <div class="token-box">
+
+                    <h4>PATIENTS WAITING</h4>
+
+                    <div class="waiting" id="generalWaiting">
+                        0
+                    </div>
+
+                </div>
+
+                <button class="call-btn"
+                    onclick="callNext('General Medicine')">
+                    CALL NEXT TOKEN
+                </button>
+
+                <button class="reset-btn"
+                    onclick="resetQueue('General Medicine')">
+                    RESET QUEUE
+                </button>
+
+            </div>
+
+
+            <!-- DERMATOLOGY -->
+
+            <div class="department-card">
+
+                <h3>Dermatology</h3>
+
+                <div class="token-box">
+
+                    <h4>NOW SERVING</h4>
+
+                    <div class="live-token" id="dermaCurrent">
+                        Not Started
+                    </div>
+
+                </div>
+
+                <div class="token-box">
+
+                    <h4>NEXT TOKEN</h4>
+
+                    <div class="live-token" id="dermaNext">
+                        S001
+                    </div>
+
+                </div>
+
+                <div class="token-box">
+
+                    <h4>PATIENTS WAITING</h4>
+
+                    <div class="waiting" id="dermaWaiting">
+                        0
+                    </div>
+
+                </div>
+
+                <button class="call-btn"
+                    onclick="callNext('Dermatology')">
+                    CALL NEXT TOKEN
+                </button>
+
+                <button class="reset-btn"
+                    onclick="resetQueue('Dermatology')">
+                    RESET QUEUE
+                </button>
+
+            </div>
+
+
+            <!-- DENTAL -->
+
+            <div class="department-card">
+
+                <h3>Dental</h3>
+
+                <div class="token-box">
+
+                    <h4>NOW SERVING</h4>
+
+                    <div class="live-token" id="dentalCurrent">
+                        Not Started
+                    </div>
+
+                </div>
+
+                <div class="token-box">
+
+                    <h4>NEXT TOKEN</h4>
+
+                    <div class="live-token" id="dentalNext">
+                        D001
+                    </div>
+
+                </div>
+
+                <div class="token-box">
+
+                    <h4>PATIENTS WAITING</h4>
+
+                    <div class="waiting" id="dentalWaiting">
+                        0
+                    </div>
+
+                </div>
+
+                <button class="call-btn"
+                    onclick="callNext('Dental')">
+                    CALL NEXT TOKEN
+                </button>
+
+                <button class="reset-btn"
+                    onclick="resetQueue('Dental')">
+                    RESET QUEUE
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="live-note">
+            Please wait until your token number is displayed.
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>© 2026 QueueLess | Smart Queue Management System</p>
+
+        <p>Save Time. Avoid Queues. Get Better Service.</p>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        const form = document.getElementById("bookingForm");
+
+
+        // Department information
+
+        const departments = {
+
+            "General Medicine": {
+                prefix: "G",
+                currentId: "generalCurrent",
+                nextId: "generalNext",
+                waitingId: "generalWaiting"
+            },
+
+            "Dermatology": {
+                prefix: "S",
+                currentId: "dermaCurrent",
+                nextId: "dermaNext",
+                waitingId: "dermaWaiting"
+            },
+
+            "Dental": {
+                prefix: "D",
+                currentId: "dentalCurrent",
+                nextId: "dentalNext",
+                waitingId: "dentalWaiting"
+            }
+
+        };
+
+
+        // Get saved booking counts
+
+        function getBookings() {
+
+            return JSON.parse(
+                localStorage.getItem("queueCounts") || "{}"
+            );
+
+        }
+
+
+        // Get saved serving counts
+
+        function getServed() {
+
+            return JSON.parse(
+                localStorage.getItem("servedCounts") || "{}"
+            );
+
+        }
+
+
+        // Generate token number
+
+        function makeToken(department, number) {
+
+            let prefix = departments[department].prefix;
+
+            return prefix + String(number).padStart(3, "0");
+
+        }
+
+
+        // Update one department display
+
+        function updateDisplay(department) {
+
+            let bookings = getBookings();
+            let served = getServed();
+
+            let total = bookings[department] || 0;
+            let completed = served[department] || 0;
+
+            let waiting = Math.max(0, total - completed);
+
+            let details = departments[department];
+
+            // Current token
+
+            let currentToken = completed > 0
+                ? makeToken(department, completed)
+                : "Not Started";
+
+            // Next token
+
+            let nextToken = waiting > 0
+                ? makeToken(department, completed + 1)
+                : "None";
+
+            document.getElementById(details.currentId).innerText =
+                currentToken;
+
+            document.getElementById(details.nextId).innerText =
+                nextToken;
+
+            document.getElementById(details.waitingId).innerText =
+                waiting;
+
+        }
+
+
+        // Update all departments
+
+        function updateAllDisplays() {
+
+            updateDisplay("General Medicine");
+            updateDisplay("Dermatology");
+            updateDisplay("Dental");
+
+        }
+
+
+        // Book token
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            let name = document.getElementById("name").value.trim();
+
+            let email = document.getElementById("email").value.trim();
+
+            let department =
+                document.getElementById("department").value;
+
+            let counts = getBookings();
+
+            counts[department] = (counts[department] || 0) + 1;
+
+            localStorage.setItem(
+                "queueCounts",
+                JSON.stringify(counts)
+            );
+
+            let number = counts[department];
+
+            let token = makeToken(department, number);
+
+            document.getElementById("tokenNumber").innerText = token;
+
+            document.getElementById("patientName").innerText =
+                "Patient: " + name;
+
+            document.getElementById("patientDepartment").innerText =
+                "Department: " + department;
+
+            document.getElementById("queuePosition").innerText =
+                "Your booking position: " +
+                Math.max(0, number - (getServed()[department] || 0));
+
+            document.getElementById("result").style.display = "block";
+
+            updateDisplay(department);
+
+            form.reset();
+
+        });
+
+
+        // Call next token
+
+        function callNext(department) {
+
+            let bookings = getBookings();
+
+            let served = getServed();
+
+            let total = bookings[department] || 0;
+
+            let completed = served[department] || 0;
+
+            if (completed < total) {
+
+                served[department] = completed + 1;
+
+                localStorage.setItem(
+                    "servedCounts",
+                    JSON.stringify(served)
+                );
+
+                updateDisplay(department);
+
+            } else {
+
+                alert("No patients waiting in " + department + "!");
+
+            }
+
+        }
+
+
+        // Reset one department queue
+
+        function resetQueue(department) {
+
+            let confirmReset = confirm(
+                "Are you sure you want to reset the " +
+                department + " queue?"
+            );
+
+            if (!confirmReset) {
+                return;
+            }
+
+            let served = getServed();
+
+            served[department] = 0;
+
+            localStorage.setItem(
+                "servedCounts",
+                JSON.stringify(served)
+            );
+
+            updateDisplay(department);
+
+        }
+
+
+        // Display all tokens when website opens
+
+        updateAllDisplays();
+
+    </script>
+
+</body>
+</html>
